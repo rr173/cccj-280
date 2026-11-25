@@ -1,7 +1,7 @@
 {
   "plans": [
     {
-      "created_at": "2026-11-25T06:24:49.034235+00:00",
+      "created_at": "2026-11-25T08:09:02.711203+00:00",
       "plan_id": "CC-1",
       "result": {
         "allocations": [
@@ -42,10 +42,10 @@
       },
       "status": "WITHDRAWN",
       "supersedes": null,
-      "withdrawn_at": "2026-11-25T06:24:49.034235+00:00"
+      "withdrawn_at": "2026-11-25T08:09:02.711203+00:00"
     },
     {
-      "created_at": "2026-11-25T06:24:49.034235+00:00",
+      "created_at": "2026-11-25T08:09:02.711203+00:00",
       "plan_id": "CC-R0",
       "result": {
         "allocations": [
@@ -86,10 +86,10 @@
       },
       "status": "WITHDRAWN",
       "supersedes": "CC-1",
-      "withdrawn_at": "2026-11-25T06:24:49.034235+00:00"
+      "withdrawn_at": "2026-11-25T08:09:02.711203+00:00"
     },
     {
-      "created_at": "2026-11-25T06:24:49.034235+00:00",
+      "created_at": "2026-11-25T08:09:02.711203+00:00",
       "plan_id": "CC-R1",
       "result": {
         "allocations": [
@@ -130,10 +130,10 @@
       },
       "status": "WITHDRAWN",
       "supersedes": "CC-R0",
-      "withdrawn_at": "2026-11-25T06:24:49.034235+00:00"
+      "withdrawn_at": "2026-11-25T08:09:02.711203+00:00"
     },
     {
-      "created_at": "2026-11-25T06:24:49.034235+00:00",
+      "created_at": "2026-11-25T08:09:02.711203+00:00",
       "plan_id": "CC-R2",
       "result": {
         "allocations": [

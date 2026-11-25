@@ -1,0 +1,144 @@
+{
+  "name": "recall_demo",
+  "batches": [
+    {
+      "batch_id": "B-RAW",
+      "production_date": "2026-01-01",
+      "purposes": [
+        "F"
+      ],
+      "initial_status": "QUARANTINED"
+    },
+    {
+      "batch_id": "B-RAW2",
+      "production_date": "2026-01-01",
+      "purposes": [
+        "F"
+      ],
+      "initial_status": "QUARANTINED"
+    },
+    {
+      "batch_id": "B-FG",
+      "production_date": "2026-01-05",
+      "purposes": [
+        "F"
+      ],
+      "initial_status": "QUARANTINED"
+    }
+  ],
+  "quantity_events": [
+    {
+      "event_id": "R-1",
+      "batch_id": "B-RAW",
+      "type": "RECEIPT",
+      "qty": 100,
+      "effective_at": "2026-01-02T08:00:00Z"
+    },
+    {
+      "event_id": "R-2",
+      "batch_id": "B-RAW",
+      "type": "RECEIPT",
+      "qty": 50,
+      "effective_at": "2026-02-01T08:00:00Z"
+    },
+    {
+      "event_id": "R-3",
+      "batch_id": "B-RAW2",
+      "type": "RECEIPT",
+      "qty": 200,
+      "effective_at": "2026-01-02T09:00:00Z"
+    },
+    {
+      "event_id": "I-1",
+      "batch_id": "B-RAW",
+      "type": "ISSUE",
+      "qty": 30,
+      "effective_at": "2026-01-10T08:00:00Z"
+    },
+    {
+      "event_id": "I-2",
+      "batch_id": "B-RAW2",
+      "type": "ISSUE",
+      "qty": 10,
+      "effective_at": "2026-01-10T09:00:00Z"
+    },
+    {
+      "event_id": "P-1",
+      "batch_id": "B-FG",
+      "type": "RECEIPT",
+      "qty": 25,
+      "effective_at": "2026-01-11T08:00:00Z"
+    },
+    {
+      "event_id": "I-3",
+      "batch_id": "B-RAW",
+      "type": "ISSUE",
+      "qty": 20,
+      "effective_at": "2026-02-10T08:00:00Z"
+    },
+    {
+      "event_id": "P-2",
+      "batch_id": "B-FG",
+      "type": "RECEIPT",
+      "qty": 15,
+      "effective_at": "2026-02-11T08:00:00Z"
+    },
+    {
+      "event_id": "S-1",
+      "batch_id": "B-RAW",
+      "type": "SCRAP",
+      "qty": 5,
+      "effective_at": "2026-02-15T08:00:00Z"
+    },
+    {
+      "event_id": "RT-1",
+      "batch_id": "B-RAW",
+      "type": "RETURN",
+      "qty": 10,
+      "effective_at": "2026-02-20T08:00:00Z",
+      "sealed": true,
+      "accepted": true
+    }
+  ],
+  "status_events": [
+    {
+      "event_id": "S-R1",
+      "batch_id": "B-RAW",
+      "status": "RELEASED",
+      "effective_at": "2026-01-03T00:00:00Z",
+      "evidence_id": "Q-1"
+    },
+    {
+      "event_id": "S-R2",
+      "batch_id": "B-RAW2",
+      "status": "RELEASED",
+      "effective_at": "2026-01-03T00:00:00Z",
+      "evidence_id": "Q-2"
+    },
+    {
+      "event_id": "S-R3",
+      "batch_id": "B-FG",
+      "status": "RELEASED",
+      "effective_at": "2026-01-06T00:00:00Z",
+      "evidence_id": "Q-3"
+    }
+  ],
+  "shelf_rules": [
+    {
+      "rule_id": "R-GEN-V1",
+      "purpose": null,
+      "version": "v1",
+      "effective_at": "2025-01-01T00:00:00Z",
+      "shelf_life_days": 720,
+      "timezone": "UTC"
+    }
+  ],
+  "orders": [
+    {
+      "order_id": "O-1",
+      "purpose": "F",
+      "qty": 60,
+      "priority": 10
+    }
+  ]
+}

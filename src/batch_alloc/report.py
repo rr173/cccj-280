@@ -9,6 +9,65 @@ from .writeoff import (
 )
 
 
+def render_recall(report: dict) -> str:
+    """召回清单终端文本（与 JSON 同口径；数量可能达十亿件，只展示汇总）。"""
+    def fmt(m: dict) -> str:
+        return "、".join(f"{k}={v}" for k, v in m.items()) or "-"
+
+    lines = ["=" * 96]
+    lines.append(f"召回清单（只读） | 数据集 {report['dataset']} | 业务时点 "
+                 f"{report['as_of'].isoformat()}")
+    lines.append(f"召回来源（原料入库事件）: {', '.join(report['recall_sources'])}")
+    lines.append("=" * 96)
+
+    lines.append("【已出库订单：尚未收回的受影响货物】")
+    if report["affected_orders"]:
+        lines.append(f"  {'核销单':<14}{'订单':<10}{'批次':<10}{'出库量':>12}"
+                     f"{'未收回':>12}  各来源/未收回来源")
+        for r in report["affected_orders"]:
+            lines.append(f"  {r['writeoff_id']:<14}{r['order_id']:<10}{r['batch_id']:<10}"
+                         f"{r['qty']:>12}{r['unrecovered_qty']:>12}  "
+                         f"{fmt(r['by_source'])} | {fmt(r['unrecovered_by_source'])}")
+    else:
+        lines.append("  （无）")
+
+    lines.append("")
+    lines.append("【仍有受影响库存的批次】")
+    if report["affected_stock"]:
+        lines.append(f"  {'批次':<12}{'在库':>12}{'受影响':>12}  各来源")
+        for r in report["affected_stock"]:
+            lines.append(f"  {r['batch_id']:<12}{r['on_hand']:>12}"
+                         f"{r['affected_qty']:>12}  {fmt(r['by_source'])}")
+    else:
+        lines.append("  （无）")
+
+    if report.get("in_transit"):
+        lines.append("")
+        lines.append("【已领用、尚未产出（加工中）的受影响货物】")
+        for r in report["in_transit"]:
+            lines.append(f"  加工 {r['process_id']} 领用 {r['qty']} 件 "
+                         f"（{', '.join(r['issue_events'])}）来源 {fmt(r['by_source'])}")
+
+    lines.append("")
+    lines.append("【已收回并重新入库的受影响货物】")
+    if report["recovered"]:
+        for r in report["recovered"]:
+            lines.append(f"  退回 {r['return_event_id']} 收回 {r['qty']} 件 "
+                         f"（{r['writeoff_id']}/{r['order_id']}）来源 {fmt(r['by_source'])}")
+    else:
+        lines.append("  （无）")
+
+    t = report["totals"]
+    lines.append("")
+    lines.append("【汇总（同一来源多路汇合只算一次）】")
+    lines.append(f"  当前受影响：在库={t['affected_stock']}  未收回={t['affected_unrecovered']}  "
+                 f"加工中={t['affected_in_transit']}  => 总量 {t['affected_outstanding']}")
+    lines.append(f"  流量（已含于在库，不重复相加）：已出库受影响={t['affected_shipped']}  "
+                 f"其中已收回={t['affected_recovered']}")
+    lines.append("=" * 96)
+    return "\n".join(lines)
+
+
 def render_plan(result: PlanResult, verification: dict | None = None) -> str:
     lines: list[str] = []
     lines.append("=" * 78)

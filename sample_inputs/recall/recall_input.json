@@ -1,0 +1,10 @@
+{
+  "recall_source_event_ids": ["R-1"],
+  "processes": [
+    {"link_id": "L1", "issue_events": ["I-1"], "output_events": ["P-1"]},
+    {"link_id": "L2", "issue_events": ["I-3"], "output_events": ["P-2"]}
+  ],
+  "returns": [
+    {"return_event_id": "RT-1", "writeoff_id": "WO-1", "order_id": "O-1", "batch_id": "B-RAW"}
+  ]
+}

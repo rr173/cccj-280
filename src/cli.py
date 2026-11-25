@@ -27,6 +27,7 @@ from batch_alloc import (  # noqa: E402
     render_plan, InvalidHistory, InputError, to_plain,
     WarehouseService, load_writeoff, render_writeoff_result,
     render_writeoff_records, render_order_execution, render_stock,
+    render_recall, load_recall_input, recall_report_from_store,
     RegistryError,
 )
 
@@ -144,6 +145,26 @@ def cmd_stock(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_recall(args: argparse.Namespace) -> int:
+    """只读召回清单：不写登记册、不写核销存储、不改数据集。"""
+    ds = load_dataset(args.input)
+    at = parse_dt(args.as_of, "as_of")
+    recall_input = load_recall_input(args.recall)
+    store = args.store
+    if store is None and args.registry:
+        store = os.path.join(os.path.dirname(os.path.abspath(args.registry)),
+                             "writeoffs.json")
+    if store is None:
+        raise InputError("recall 需要 --store 或 --registry（用于定位核销记录）")
+    report = recall_report_from_store(ds, store, recall_input, at)
+    print(render_recall(report))
+    if args.out:
+        with open(args.out, "w", encoding="utf-8") as fh:
+            json.dump(to_plain(report), fh, ensure_ascii=False, indent=2, sort_keys=True)
+        print(f"召回清单已写入 {args.out}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="批次可执行分配与拣发核销（规则版本/业务时点驱动）")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -207,6 +228,15 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--store", default=None)
     p.add_argument("--as-of", default=None, help="只计入该时点前（含）的核销出库")
     p.set_defaults(func=cmd_stock)
+
+    p = sub.add_parser("recall", help="只读召回清单（受影响未收回订单 + 受影响在库批次）")
+    p.add_argument("--input", required=True, help="数据集 JSON")
+    p.add_argument("--as-of", required=True, help="查询业务时点")
+    p.add_argument("--recall", required=True, help="召回输入 JSON（起点/加工关联/退回关联）")
+    p.add_argument("--store", default=None, help="核销存储 JSON")
+    p.add_argument("--registry", default=None, help="方案登记册（默认同目录 writeoffs.json）")
+    p.add_argument("--out", default=None, help="输出 JSON 路径（只写该文件）")
+    p.set_defaults(func=cmd_recall)
 
     args = parser.parse_args(argv)
     try:

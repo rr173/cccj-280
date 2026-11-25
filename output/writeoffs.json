@@ -43,7 +43,7 @@
         "status": "ACTIVE"
       },
       "status": "ACCEPTED",
-      "submitted_at": "2026-11-25T06:24:49.022841+00:00",
+      "submitted_at": "2026-11-25T08:09:02.700633+00:00",
       "writeoff_id": "WO-SH-001"
     },
     {
@@ -66,7 +66,7 @@
       "plan_id": "RC-V1",
       "plan_snapshot": null,
       "status": "REJECTED",
-      "submitted_at": "2026-11-25T06:24:49.022841+00:00",
+      "submitted_at": "2026-11-25T08:09:02.700633+00:00",
       "writeoff_id": "WO-SH-BADBATCH"
     },
     {
@@ -89,7 +89,7 @@
       "plan_id": "RC-V1",
       "plan_snapshot": null,
       "status": "REJECTED",
-      "submitted_at": "2026-11-25T06:24:49.022841+00:00",
+      "submitted_at": "2026-11-25T08:09:02.700633+00:00",
       "writeoff_id": "WO-SH-002"
     },
     {
@@ -130,7 +130,7 @@
         "status": "ACTIVE"
       },
       "status": "ACCEPTED",
-      "submitted_at": "2026-11-25T06:24:49.022841+00:00",
+      "submitted_at": "2026-11-25T08:09:02.700633+00:00",
       "writeoff_id": "WO-SH-002B"
     },
     {
@@ -153,7 +153,7 @@
       "plan_id": "RC-V1",
       "plan_snapshot": null,
       "status": "REJECTED",
-      "submitted_at": "2026-11-25T06:24:49.022841+00:00",
+      "submitted_at": "2026-11-25T08:09:02.700633+00:00",
       "writeoff_id": "WO-LATE"
     }
   ]

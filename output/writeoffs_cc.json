@@ -38,7 +38,7 @@
         "status": "ACTIVE"
       },
       "status": "ACCEPTED",
-      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "submitted_at": "2026-11-25T08:09:02.711203+00:00",
       "writeoff_id": "CC-W0"
     },
     {
@@ -79,7 +79,7 @@
         "status": "ACTIVE"
       },
       "status": "ACCEPTED",
-      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "submitted_at": "2026-11-25T08:09:02.711203+00:00",
       "writeoff_id": "CC-W1"
     },
     {
@@ -120,7 +120,7 @@
         "status": "ACTIVE"
       },
       "status": "ACCEPTED",
-      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "submitted_at": "2026-11-25T08:09:02.711203+00:00",
       "writeoff_id": "CC-W2"
     },
     {
@@ -161,7 +161,7 @@
         "status": "ACTIVE"
       },
       "status": "ACCEPTED",
-      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "submitted_at": "2026-11-25T08:09:02.711203+00:00",
       "writeoff_id": "CC-W3"
     },
     {
@@ -202,7 +202,7 @@
         "status": "ACTIVE"
       },
       "status": "ACCEPTED",
-      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "submitted_at": "2026-11-25T08:09:02.711203+00:00",
       "writeoff_id": "CC-W4"
     },
     {
@@ -243,7 +243,7 @@
         "status": "ACTIVE"
       },
       "status": "ACCEPTED",
-      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "submitted_at": "2026-11-25T08:09:02.711203+00:00",
       "writeoff_id": "CC-W5"
     },
     {
@@ -284,7 +284,7 @@
         "status": "ACTIVE"
       },
       "status": "ACCEPTED",
-      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "submitted_at": "2026-11-25T08:09:02.711203+00:00",
       "writeoff_id": "CC-W6"
     },
     {
@@ -325,7 +325,7 @@
         "status": "ACTIVE"
       },
       "status": "ACCEPTED",
-      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "submitted_at": "2026-11-25T08:09:02.711203+00:00",
       "writeoff_id": "CC-W7"
     },
     {
@@ -366,7 +366,7 @@
         "status": "ACTIVE"
       },
       "status": "ACCEPTED",
-      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "submitted_at": "2026-11-25T08:09:02.711203+00:00",
       "writeoff_id": "CC-W8"
     },
     {
@@ -407,7 +407,7 @@
         "status": "ACTIVE"
       },
       "status": "ACCEPTED",
-      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "submitted_at": "2026-11-25T08:09:02.711203+00:00",
       "writeoff_id": "CC-W9"
     },
     {
@@ -430,7 +430,7 @@
       "plan_id": "CC-1",
       "plan_snapshot": null,
       "status": "REJECTED",
-      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "submitted_at": "2026-11-25T08:09:02.711203+00:00",
       "writeoff_id": "CC-W10"
     },
     {
@@ -453,7 +453,7 @@
       "plan_id": "CC-1",
       "plan_snapshot": null,
       "status": "REJECTED",
-      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "submitted_at": "2026-11-25T08:09:02.711203+00:00",
       "writeoff_id": "CC-W11"
     }
   ]

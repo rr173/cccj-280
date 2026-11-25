@@ -78,11 +78,15 @@ src/batch_alloc/
   registry.py   方案发布/撤回/重算、JSON 原子持久化、独立核验 verify_plan
   writeoff.py   拣发核销：幂等存储、排他锁（RLock+flock）、WarehouseService 串行化、
                 合成 ISSUE 出库事实、订单执行量与库存视图、失败原因码
-  report.py     终端可读报告（方案 + 核销记录/执行量/库存）
-src/cli.py      命令行入口（plan/recalc/history/ledger/writeoff/writeoffs/execution/stock）
-sample_inputs/  7 个演示数据集 + 核销单样例（不可信输入，独立目录）
+  recall.py     只读召回清单：来源追溯（区间式 FIFO，不按单件展开）、加工关联、
+                退回关联、受影响在库/未收回订单/在途/已收回、错误码
+  report.py     终端可读报告（方案 + 核销记录/执行量/库存 + 召回清单）
+src/cli.py      命令行入口（plan/recalc/history/ledger/writeoff/writeoffs/execution/stock/recall）
+sample_inputs/  7 个演示数据集 + 核销单样例 + recall/ 召回演示输入（不可信输入，独立目录）
 tests/          23 项单元测试 + 24 项核销测试 + 100 组随机性质 + 40 组核销随机性质
+                + 27 项召回测试（tests/test_recall.py）
 demo/run_demo.py 端到端演示（含错误 FCFS 对照、核销全生命周期、并发可串行化）
+demo/recall_demo.py 只读召回演示（FIFO/加工/退回/只读性/十亿级数量）
 output/         运行产物（方案 JSON、登记册、核销存储、日志）
 ```
 
@@ -96,6 +100,7 @@ python3 -I demo/run_demo.py
 python3 -I tests/test_batch_alloc.py
 python3 -I tests/test_writeoff.py
 python3 -I tests/test_random_property.py
+python3 -I tests/test_recall.py
 
 # CLI：分配
 python3 -I src/cli.py plan   --input sample_inputs/demo_wide_narrow.json \
@@ -118,10 +123,20 @@ python3 -I src/cli.py execution --input sample_inputs/demo_shelf.json \
 python3 -I src/cli.py stock     --input sample_inputs/demo_shelf.json \
                                 --registry output/registry.json \
                                 [--as-of 2026-03-21T09:00:00Z]
+
+# CLI：只读召回清单（不写登记册/核销存储，--out 只写清单文件）
+python3 -I demo/recall_demo.py
+python3 -I src/cli.py recall    --input sample_inputs/recall/recall_dataset.json \
+                                --as-of 2026-03-01T00:00:00Z \
+                                --recall sample_inputs/recall/recall_input.json \
+                                --registry /tmp/recdemo/registry.json \
+                                [--out recall.json]
 ```
 
 无效历史退出码为 `3`；核验失败退出码为 `2`；核销单被拒绝退出码为 `4`；
 登记册错误退出码为 `5`。核销接受（含幂等重送命中）退出码为 `0`。
+召回清单只读：发现关联无效/缺退回关联/身份冲突/超退/负余额等一律退出码 `3`，
+不输出不完整清单。
 
 ### 核销单 JSON 结构
 
@@ -205,3 +220,87 @@ python3 -I src/cli.py stock     --input sample_inputs/demo_shelf.json \
   B-SH2 实际库存 94，出库事实恰好计入一次。
 - 并发演示：12 线程核销叠加 3 线程重算，最终仅 10 张出库被接受（分配量上限），
   仅一个 ACTIVE 方案，库存恒非负——结果等价于某种完整串行顺序。
+
+## 6. 只读召回清单（`recall`）
+
+供应商通知某几笔原料入库需要召回时，用现有数据集 + 已有核销记录，回答“截至某个
+业务时点，哪些**已出库订单**还没收回受影响货物、哪些**批次**还有受影响库存，各多少”。
+
+本功能**只读**：不改事件账本、核销记录或已发布方案（CLI 只额外写 `--out` 指定的清单文件）。
+
+### 6.1 口径
+
+1. **数量沿账本生效顺序**：同一时点按事件 ID；仅计本数据集、截至时点实际发生的核销，
+   不论其方案后来是否撤回（沿用 `WRITEOFF:<单号>:<批次>` 事件身份）。
+2. **同批先进先出**：领用/报废/核销出库只消耗“当时已入库且尚未消耗”的最早货物，
+   **不会把同批后来入库的货物算进较早的发出**；账本顺序下超领即非法历史，报错。
+   同一核销单同批多条订单行按**订单 ID 顺序**取货。
+3. **召回起点**：输入的原料入库事件必须截至时点已发生、且不是任何加工的产出。
+4. **加工关联**：一组领用 + 一组产成品入库标识同一次加工（可多领用/多产出）。
+   每个事件至多归属一次加工；按账本顺序所有领用须早于所有产出。关联不另记库存，
+   只把“被领用货物携带的召回来源”传给该次加工**全部产出**。只要实际领用过一个单位
+   召回来源，全部产出都受影响；未领用的库存与更早的产出不受这次加工影响。
+   产出携带来源**集合**，同一来源经多路加工汇合只记一次。
+5. **退回关联**：每笔按现有规则入账（未拆封+验收合格）的退回必须指向账本顺序中已发生
+   的一条**已接受核销订单行**，且批次相同。分次退回按该行当初取货先后认定收回部分，
+   累计不得超出该行数量；收回货物保留来源、在退回时点重新入仓。未入账退回不计为收回。
+6. **错误即停**：缺少必需退回关联，或关联无效、事件身份冲突、非法领用/产出顺序、
+   超退、负余额时，抛 `RecallError`（错误码 + 明细），退出码 `3`，不输出不完整清单。
+7. **数量规模**：全程按区间与整数运算，不按单件展开，十亿件可秒级计算。
+
+### 6.2 输入结构
+
+召回输入与数据集、核销存储分离（`--recall` 指向）：
+
+```json
+{
+  "recall_source_event_ids": ["R-1"],
+  "processes": [
+    {"link_id": "L1", "issue_events": ["I-1"], "output_events": ["P-1", "P-2"]}
+  ],
+  "returns": [
+    {"return_event_id": "RT-1", "writeoff_id": "WO-1", "order_id": "O-1", "batch_id": "B-RAW"}
+  ]
+}
+```
+
+### 6.3 输出结构（JSON）
+
+```json
+{
+  "as_of": "...", "dataset": "...", "recall_sources": ["R-1"],
+  "affected_orders": [
+    {"writeoff_id","order_id","batch_id","outbound_at",
+     "qty","by_source",
+     "unrecovered_qty","unrecovered_by_source"}
+  ],
+  "affected_stock": [
+    {"batch_id","on_hand","affected_qty","by_source"}
+  ],
+  "in_transit": [ {"process_id","issue_events","qty","by_source"} ],
+  "recovered":  [ {"return_event_id","writeoff_id","order_id","batch_id",
+                   "effective_at","qty","by_source"} ],
+  "totals": {"affected_stock","affected_unrecovered","affected_in_transit",
+             "affected_outstanding","affected_shipped","affected_recovered"}
+}
+```
+
+- `affected_orders`：已出库、尚未收回的受影响订单行；`qty` 为出库受影响总量，
+  `unrecovered_qty` 为扣除已收回后的未收回量。
+- `affected_stock`：仍有受影响库存的批次；`affected_qty` 只算一次，
+  `by_source` 把该段货物记到它命中的每个来源名下（多来源汇合时
+  `sum(by_source) > affected_qty`，这是“各来源对应数量”与“同一货物只算一次”的差别）。
+- `totals.affected_outstanding = 在库 + 未收回 + 加工中在途`（同一件只出现一次）；
+  已收回货物已重新计入在库，`totals.affected_recovered` 只是流量，不重复相加。
+- 错误码：`RC_MISSING_RETURN_LINK`、`RC_UNKNOWN_EVENT`、`RC_DUPLICATE_EVENT`、
+  `RC_EVENT_CONFLICT`、`RC_INVALID_LINK`、`RC_EVENT_MISMATCH`、`RC_RETURN_NO_TARGET`、
+  `RC_RETURN_BATCH_MISMATCH`、`RC_RETURN_OVER`、`RC_NEGATIVE_BALANCE`。
+
+### 6.4 演示（`sample_inputs/recall/`）
+
+- `B-RAW`：`R-1=100`（受召回）+ `R-2=50`（后入库、不受召回）；`B-RAW2`：`R-3=200`。
+- 加工 L1 领用 `I-1=30`（全部来自 R-1）→ 产出 `P-1=25`；L2 领用 `I-3=20` → `P-2=15`。
+- 核销 `WO-1` 出库 `O-1=20`（FIFO 落在 R-1 段）；退回 `RT-1=10` 收回该行最早 10 件。
+- 结果：未收回 `O-1=10`；受影响在库 `B-RAW=35`、`B-FG=40`；已收回 10；
+  当前仍受影响总量 `85`（=在库 75 + 未收回 10，收回件已在在库中，不重复相加）。
+- 运行 `python3 -I demo/recall_demo.py` 会打印清单并断言上述数值、只读性与十亿级数量。

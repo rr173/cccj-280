@@ -12,7 +12,12 @@ from .planner import solve, brute_force_verify, PlanResult, Allocation, BlockedO
 from .registry import PlanRegistry, verify_plan, RegistryError
 from .report import (
     render_plan, render_writeoff_result, render_writeoff_records,
-    render_order_execution, render_stock,
+    render_order_execution, render_stock, render_recall,
+)
+from .recall import (
+    RecallError, RecallInput, ProcessLink, ReturnLink,
+    parse_recall_input, load_recall_input, recall_report,
+    recall_report_from_store, RC_REASON_TEXT,
 )
 from .writeoff import (
     WarehouseService, WriteOffStore, WriteOffRequest, WriteOffLine,
@@ -35,11 +40,14 @@ __all__ = [
     "solve", "brute_force_verify", "PlanResult", "Allocation", "BlockedOrder",
     "PlanRegistry", "verify_plan", "RegistryError", "render_plan",
     "render_writeoff_result", "render_writeoff_records",
-    "render_order_execution", "render_stock",
+    "render_order_execution", "render_stock", "render_recall",
     "WarehouseService", "WriteOffStore", "WriteOffRequest", "WriteOffLine",
     "WriteOffRecord", "WriteOffResult", "WriteOffFailure", "PlanSnapshot",
     "OrderExecution", "BatchStock", "parse_writeoff", "load_writeoff",
     "dataset_with_outbounds", "content_hash_of",
+    "RecallError", "RecallInput", "ProcessLink", "ReturnLink",
+    "parse_recall_input", "load_recall_input", "recall_report",
+    "recall_report_from_store", "RC_REASON_TEXT",
     "STATUS_ACCEPTED", "STATUS_REJECTED", "WO_REASON_TEXT",
     "WO_PLAN_NOT_ACTIVE", "WO_BATCH_MISMATCH", "WO_EXCEEDS_ALLOCATED",
     "WO_NEGATIVE_HISTORY", "WO_IDEMPOTENT_CONFLICT", "WO_LINE_NOT_IN_PLAN",
