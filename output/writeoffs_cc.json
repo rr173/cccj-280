@@ -1,0 +1,460 @@
+{
+  "writeoffs": [
+    {
+      "content_hash": "5975da7bd1a681d7",
+      "duplicate": false,
+      "failures": [],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-21T00:00:00+00:00",
+      "plan_id": "CC-1",
+      "plan_snapshot": {
+        "allocations": [
+          {
+            "batch_id": "B-SH",
+            "expiry": "2026-03-31T00:00:00+08:00",
+            "order_id": "O-F",
+            "qty": 10,
+            "rule_id": "R-F-V1"
+          },
+          {
+            "batch_id": "B-SH2",
+            "expiry": "2026-03-31T00:00:00+00:00",
+            "order_id": "O-G",
+            "qty": 10,
+            "rule_id": "R-G-V1"
+          }
+        ],
+        "as_of": "2026-03-20T00:00:00+00:00",
+        "dataset_name": "shelf_boundary",
+        "input_hash": "c0459ab2fa6aa9aa",
+        "plan_id": "CC-1",
+        "rule_version": "v1",
+        "status": "ACTIVE"
+      },
+      "status": "ACCEPTED",
+      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "writeoff_id": "CC-W0"
+    },
+    {
+      "content_hash": "4ae91aae2cff5f5e",
+      "duplicate": false,
+      "failures": [],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-21T01:00:00+00:00",
+      "plan_id": "CC-1",
+      "plan_snapshot": {
+        "allocations": [
+          {
+            "batch_id": "B-SH",
+            "expiry": "2026-03-31T00:00:00+08:00",
+            "order_id": "O-F",
+            "qty": 10,
+            "rule_id": "R-F-V1"
+          },
+          {
+            "batch_id": "B-SH2",
+            "expiry": "2026-03-31T00:00:00+00:00",
+            "order_id": "O-G",
+            "qty": 10,
+            "rule_id": "R-G-V1"
+          }
+        ],
+        "as_of": "2026-03-20T00:00:00+00:00",
+        "dataset_name": "shelf_boundary",
+        "input_hash": "c0459ab2fa6aa9aa",
+        "plan_id": "CC-1",
+        "rule_version": "v1",
+        "status": "ACTIVE"
+      },
+      "status": "ACCEPTED",
+      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "writeoff_id": "CC-W1"
+    },
+    {
+      "content_hash": "4fd9dbb7091fa629",
+      "duplicate": false,
+      "failures": [],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-21T02:00:00+00:00",
+      "plan_id": "CC-1",
+      "plan_snapshot": {
+        "allocations": [
+          {
+            "batch_id": "B-SH",
+            "expiry": "2026-03-31T00:00:00+08:00",
+            "order_id": "O-F",
+            "qty": 10,
+            "rule_id": "R-F-V1"
+          },
+          {
+            "batch_id": "B-SH2",
+            "expiry": "2026-03-31T00:00:00+00:00",
+            "order_id": "O-G",
+            "qty": 10,
+            "rule_id": "R-G-V1"
+          }
+        ],
+        "as_of": "2026-03-20T00:00:00+00:00",
+        "dataset_name": "shelf_boundary",
+        "input_hash": "c0459ab2fa6aa9aa",
+        "plan_id": "CC-1",
+        "rule_version": "v1",
+        "status": "ACTIVE"
+      },
+      "status": "ACCEPTED",
+      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "writeoff_id": "CC-W2"
+    },
+    {
+      "content_hash": "4fc3a362794f9d24",
+      "duplicate": false,
+      "failures": [],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-21T03:00:00+00:00",
+      "plan_id": "CC-1",
+      "plan_snapshot": {
+        "allocations": [
+          {
+            "batch_id": "B-SH",
+            "expiry": "2026-03-31T00:00:00+08:00",
+            "order_id": "O-F",
+            "qty": 10,
+            "rule_id": "R-F-V1"
+          },
+          {
+            "batch_id": "B-SH2",
+            "expiry": "2026-03-31T00:00:00+00:00",
+            "order_id": "O-G",
+            "qty": 10,
+            "rule_id": "R-G-V1"
+          }
+        ],
+        "as_of": "2026-03-20T00:00:00+00:00",
+        "dataset_name": "shelf_boundary",
+        "input_hash": "c0459ab2fa6aa9aa",
+        "plan_id": "CC-1",
+        "rule_version": "v1",
+        "status": "ACTIVE"
+      },
+      "status": "ACCEPTED",
+      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "writeoff_id": "CC-W3"
+    },
+    {
+      "content_hash": "d43599c8cd994baa",
+      "duplicate": false,
+      "failures": [],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-21T04:00:00+00:00",
+      "plan_id": "CC-1",
+      "plan_snapshot": {
+        "allocations": [
+          {
+            "batch_id": "B-SH",
+            "expiry": "2026-03-31T00:00:00+08:00",
+            "order_id": "O-F",
+            "qty": 10,
+            "rule_id": "R-F-V1"
+          },
+          {
+            "batch_id": "B-SH2",
+            "expiry": "2026-03-31T00:00:00+00:00",
+            "order_id": "O-G",
+            "qty": 10,
+            "rule_id": "R-G-V1"
+          }
+        ],
+        "as_of": "2026-03-20T00:00:00+00:00",
+        "dataset_name": "shelf_boundary",
+        "input_hash": "c0459ab2fa6aa9aa",
+        "plan_id": "CC-1",
+        "rule_version": "v1",
+        "status": "ACTIVE"
+      },
+      "status": "ACCEPTED",
+      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "writeoff_id": "CC-W4"
+    },
+    {
+      "content_hash": "85d5fe69ae522662",
+      "duplicate": false,
+      "failures": [],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-21T05:00:00+00:00",
+      "plan_id": "CC-1",
+      "plan_snapshot": {
+        "allocations": [
+          {
+            "batch_id": "B-SH",
+            "expiry": "2026-03-31T00:00:00+08:00",
+            "order_id": "O-F",
+            "qty": 10,
+            "rule_id": "R-F-V1"
+          },
+          {
+            "batch_id": "B-SH2",
+            "expiry": "2026-03-31T00:00:00+00:00",
+            "order_id": "O-G",
+            "qty": 10,
+            "rule_id": "R-G-V1"
+          }
+        ],
+        "as_of": "2026-03-20T00:00:00+00:00",
+        "dataset_name": "shelf_boundary",
+        "input_hash": "c0459ab2fa6aa9aa",
+        "plan_id": "CC-1",
+        "rule_version": "v1",
+        "status": "ACTIVE"
+      },
+      "status": "ACCEPTED",
+      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "writeoff_id": "CC-W5"
+    },
+    {
+      "content_hash": "076b4044c670b66c",
+      "duplicate": false,
+      "failures": [],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-21T06:00:00+00:00",
+      "plan_id": "CC-1",
+      "plan_snapshot": {
+        "allocations": [
+          {
+            "batch_id": "B-SH",
+            "expiry": "2026-03-31T00:00:00+08:00",
+            "order_id": "O-F",
+            "qty": 10,
+            "rule_id": "R-F-V1"
+          },
+          {
+            "batch_id": "B-SH2",
+            "expiry": "2026-03-31T00:00:00+00:00",
+            "order_id": "O-G",
+            "qty": 10,
+            "rule_id": "R-G-V1"
+          }
+        ],
+        "as_of": "2026-03-20T00:00:00+00:00",
+        "dataset_name": "shelf_boundary",
+        "input_hash": "c0459ab2fa6aa9aa",
+        "plan_id": "CC-1",
+        "rule_version": "v1",
+        "status": "ACTIVE"
+      },
+      "status": "ACCEPTED",
+      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "writeoff_id": "CC-W6"
+    },
+    {
+      "content_hash": "101b03e63617d121",
+      "duplicate": false,
+      "failures": [],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-21T07:00:00+00:00",
+      "plan_id": "CC-1",
+      "plan_snapshot": {
+        "allocations": [
+          {
+            "batch_id": "B-SH",
+            "expiry": "2026-03-31T00:00:00+08:00",
+            "order_id": "O-F",
+            "qty": 10,
+            "rule_id": "R-F-V1"
+          },
+          {
+            "batch_id": "B-SH2",
+            "expiry": "2026-03-31T00:00:00+00:00",
+            "order_id": "O-G",
+            "qty": 10,
+            "rule_id": "R-G-V1"
+          }
+        ],
+        "as_of": "2026-03-20T00:00:00+00:00",
+        "dataset_name": "shelf_boundary",
+        "input_hash": "c0459ab2fa6aa9aa",
+        "plan_id": "CC-1",
+        "rule_version": "v1",
+        "status": "ACTIVE"
+      },
+      "status": "ACCEPTED",
+      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "writeoff_id": "CC-W7"
+    },
+    {
+      "content_hash": "fdbce0d285068a1a",
+      "duplicate": false,
+      "failures": [],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-21T08:00:00+00:00",
+      "plan_id": "CC-1",
+      "plan_snapshot": {
+        "allocations": [
+          {
+            "batch_id": "B-SH",
+            "expiry": "2026-03-31T00:00:00+08:00",
+            "order_id": "O-F",
+            "qty": 10,
+            "rule_id": "R-F-V1"
+          },
+          {
+            "batch_id": "B-SH2",
+            "expiry": "2026-03-31T00:00:00+00:00",
+            "order_id": "O-G",
+            "qty": 10,
+            "rule_id": "R-G-V1"
+          }
+        ],
+        "as_of": "2026-03-20T00:00:00+00:00",
+        "dataset_name": "shelf_boundary",
+        "input_hash": "c0459ab2fa6aa9aa",
+        "plan_id": "CC-1",
+        "rule_version": "v1",
+        "status": "ACTIVE"
+      },
+      "status": "ACCEPTED",
+      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "writeoff_id": "CC-W8"
+    },
+    {
+      "content_hash": "5975da7bd1a681d7",
+      "duplicate": false,
+      "failures": [],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-21T00:00:00+00:00",
+      "plan_id": "CC-1",
+      "plan_snapshot": {
+        "allocations": [
+          {
+            "batch_id": "B-SH",
+            "expiry": "2026-03-31T00:00:00+08:00",
+            "order_id": "O-F",
+            "qty": 10,
+            "rule_id": "R-F-V1"
+          },
+          {
+            "batch_id": "B-SH2",
+            "expiry": "2026-03-31T00:00:00+00:00",
+            "order_id": "O-G",
+            "qty": 10,
+            "rule_id": "R-G-V1"
+          }
+        ],
+        "as_of": "2026-03-20T00:00:00+00:00",
+        "dataset_name": "shelf_boundary",
+        "input_hash": "c0459ab2fa6aa9aa",
+        "plan_id": "CC-1",
+        "rule_version": "v1",
+        "status": "ACTIVE"
+      },
+      "status": "ACCEPTED",
+      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "writeoff_id": "CC-W9"
+    },
+    {
+      "content_hash": "4ae91aae2cff5f5e",
+      "duplicate": false,
+      "failures": [
+        {
+          "code": "WO_EXCEEDS_ALLOCATED",
+          "detail": "订单 O-F 原分配 10，已出库 10，本单 1，累计 11 超量"
+        }
+      ],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-21T01:00:00+00:00",
+      "plan_id": "CC-1",
+      "plan_snapshot": null,
+      "status": "REJECTED",
+      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "writeoff_id": "CC-W10"
+    },
+    {
+      "content_hash": "4fd9dbb7091fa629",
+      "duplicate": false,
+      "failures": [
+        {
+          "code": "WO_EXCEEDS_ALLOCATED",
+          "detail": "订单 O-F 原分配 10，已出库 10，本单 1，累计 11 超量"
+        }
+      ],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-21T02:00:00+00:00",
+      "plan_id": "CC-1",
+      "plan_snapshot": null,
+      "status": "REJECTED",
+      "submitted_at": "2026-11-25T06:24:49.034235+00:00",
+      "writeoff_id": "CC-W11"
+    }
+  ]
+}

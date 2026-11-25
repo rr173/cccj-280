@@ -23,8 +23,13 @@ sys.path.insert(0, os.path.join(ROOT, "src"))
 from batch_alloc import (  # noqa: E402
     load_dataset, parse_dt, Engine, solve, verify_plan, PlanRegistry,
     render_plan, to_plain, InvalidHistory, InputError, parse_dataset,
+    WarehouseService, parse_writeoff,
 )
-from batch_alloc.planner import brute_force_verify  # noqa: E402
+from batch_alloc.report import (  # noqa: E402
+    render_writeoff_result, render_writeoff_records,
+    render_order_execution, render_stock,
+)
+import threading  # noqa: E402
 
 IN = os.path.join(ROOT, "sample_inputs")
 OUT = os.path.join(ROOT, "output")
@@ -288,6 +293,174 @@ def demo_priority():
     save_json("plan_priority.json", result)
 
 
+# --------------------------------------------------------------------------- #
+# 8. 拣发核销：分次出库、幂等、整单拒绝、撤回留痕、重算恰好计入一次
+# --------------------------------------------------------------------------- #
+def demo_writeoff():
+    section("场景8 拣发核销：实际出库登记、剩余可执行量与库存更新")
+    reg_path = os.path.join(OUT, "registry_wo.json")
+    store_path = os.path.join(OUT, "writeoffs.json")
+    for p in (reg_path, store_path, store_path + ".lock"):
+        if os.path.exists(p):
+            os.remove(p)
+    svc = WarehouseService(reg_path, store_path)
+    now = datetime.now(timezone.utc)
+    at = parse_dt("2026-03-20T00:00:00Z", "at")
+    ds = load_dataset(os.path.join(IN, "demo_shelf.json"))
+    plan = svc.recalc(ds, at, "RC-V1", "v1", now)
+    print("有效方案 RC-V1 分配：",
+          [(a.order_id, a.batch_id, a.qty) for a in plan.allocations])
+
+    # 8.1 首单：O-F 出 4、O-G 出 6（一张单两行，整体接受）
+    req1 = parse_writeoff(json.load(open(os.path.join(IN, "writeoff_shelf_001.json"),
+                                         encoding="utf-8")))
+    r1 = svc.submit_writeoff(ds, req1, now)
+    print(render_writeoff_result(req1, r1))
+    assert r1.accepted and not r1.duplicate
+
+    # 8.2 相同单号、相同内容重送 => 幂等命中，不重复扣减
+    r1_again = svc.submit_writeoff(ds, req1, now)
+    print(f"重送 WO-SH-001 => accepted={r1_again.accepted} duplicate={r1_again.duplicate}")
+    assert r1_again.accepted and r1_again.duplicate
+
+    # 8.3 相同单号、不同内容 => 幂等冲突拒绝
+    conflict = parse_writeoff({
+        "writeoff_id": "WO-SH-001", "plan_id": "RC-V1",
+        "outbound_at": "2026-03-21T09:00:00Z",
+        "lines": [{"order_id": "O-F", "batch_id": "B-SH", "qty": 5}]})
+    r_conflict = svc.submit_writeoff(ds, conflict, now)
+    print("同号异内容 =>", [(f.code, f.detail) for f in r_conflict.failures])
+    assert not r_conflict.accepted
+    assert [f.code for f in r_conflict.failures] == ["WO_IDEMPOTENT_CONFLICT"]
+
+    # 8.4 批次与方案不一致 => 整单拒绝，不产生扣减
+    bad_batch = parse_writeoff(json.load(open(
+        os.path.join(IN, "writeoff_shelf_bad_batch.json"), encoding="utf-8")))
+    r_bad = svc.submit_writeoff(ds, bad_batch, now)
+    print("批次不一致 =>", [f.code for f in r_bad.failures])
+    assert not r_bad.accepted and "WO_BATCH_MISMATCH" in [f.code for f in r_bad.failures]
+
+    # 8.5 分次出库累计超分配（O-F 已出 4，再出 7 => 11 > 10）=> 整单拒绝
+    req2 = parse_writeoff(json.load(open(os.path.join(IN, "writeoff_shelf_002.json"),
+                                         encoding="utf-8")))
+    r2 = svc.submit_writeoff(ds, req2, now)
+    print("超分配 =>", [(f.code, f.detail) for f in r2.failures])
+    assert not r2.accepted and "WO_EXCEEDS_ALLOCATED" in [f.code for f in r2.failures]
+
+    # 8.6 原单号已被拒单留痕（同号异内容必拒），更正后用新单号出 6（累计恰好 10）
+    req2ok = parse_writeoff({
+        "writeoff_id": "WO-SH-002B", "plan_id": "RC-V1",
+        "outbound_at": "2026-03-22T09:00:00Z",
+        "lines": [{"order_id": "O-F", "batch_id": "B-SH", "qty": 6}]})
+    r2ok = svc.submit_writeoff(ds, req2ok, now)
+    assert r2ok.accepted, r2ok.failures
+
+    # 8.7 订单已出库量 / 剩余可执行量
+    print(render_order_execution(svc.order_execution(ds)))
+    rows = {r.order_id: r for r in svc.order_execution(ds)}
+    assert rows["O-F"].shipped_qty == 10 and rows["O-F"].remaining_qty == 0
+    assert rows["O-G"].shipped_qty == 6 and rows["O-G"].remaining_qty == 4
+
+    # 8.8 库存：账面 100，实际库存 = 账面 - 已出库
+    print(render_stock(svc.stock_view(ds)))
+    stock = {s.batch_id: s for s in svc.stock_view(ds)}
+    assert stock["B-SH"].on_hand == 90 and stock["B-SH2"].on_hand == 94
+
+    # 8.9 库存时点视图：出库时点边界
+    before = {s.batch_id: s.on_hand for s in
+              svc.stock_view(ds, parse_dt("2026-03-21T08:59:59Z", "t"))}
+    on = {s.batch_id: s.on_hand for s in
+          svc.stock_view(ds, parse_dt("2026-03-21T09:00:00Z", "t"))}
+    print("出库前一秒 B-SH 实际库存=", before["B-SH"], "；出库时点=", on["B-SH"])
+    assert before["B-SH"] == 100 and on["B-SH"] == 96
+
+    # 8.10 撤回后拒绝新核销，但已确认出库保留
+    svc.withdraw("RC-V1", now)
+    late = parse_writeoff({
+        "writeoff_id": "WO-LATE", "plan_id": "RC-V1",
+        "outbound_at": "2026-03-23T09:00:00Z",
+        "lines": [{"order_id": "O-G", "batch_id": "B-SH2", "qty": 1}]})
+    r_late = svc.submit_writeoff(ds, late, now)
+    print("撤回后核销 =>", [f.code for f in r_late.failures])
+    assert [f.code for f in r_late.failures] == ["WO_PLAN_NOT_ACTIVE"]
+    kept = {r.order_id: r.shipped_qty
+            for r in svc.order_execution(ds, plan_id="RC-V1")}
+    print("撤回后旧方案已出库事实保留：", kept)
+    assert kept == {"O-F": 10, "O-G": 6}
+
+    # 8.11 重算：新方案基于含出库事实的账本，事实恰好计入一次
+    plan2 = svc.recalc(ds, at, "RC-V4", "v1", now)
+    aug = svc.effective_dataset(ds, at)
+    v = verify_plan(aug, plan2, at, "v1", brute_force=True)
+    print("重算 RC-V4 分配：",
+          [(a.order_id, a.batch_id, a.qty) for a in plan2.allocations],
+          " 核验：", v["ok"])
+    assert v["ok"]
+    synth = [e.event_id for e in aug.quantity_events if e.event_id.startswith("WRITEOFF:")]
+    assert len(synth) == len(set(synth))  # 每单每批仅一条合成事件
+    print("核销记录全量：")
+    print(render_writeoff_records(svc.list_writeoffs()))
+
+
+# --------------------------------------------------------------------------- #
+# 9. 并发：核销与重算同时发生，最终结果等价于某种完整串行顺序
+# --------------------------------------------------------------------------- #
+def demo_concurrency():
+    section("场景9 并发：多线程核销 + 方案重算，可串行化、不超额、撤回后不接受")
+    reg_path = os.path.join(OUT, "registry_cc.json")
+    store_path = os.path.join(OUT, "writeoffs_cc.json")
+    for p in (reg_path, store_path, store_path + ".lock"):
+        if os.path.exists(p):
+            os.remove(p)
+    svc = WarehouseService(reg_path, store_path)
+    now = datetime.now(timezone.utc)
+    at = parse_dt("2026-03-20T00:00:00Z", "at")
+    ds = load_dataset(os.path.join(IN, "demo_shelf.json"))
+    svc.recalc(ds, at, "CC-1", "v1", now)
+
+    outcomes: list[bool] = []
+    lock = threading.Lock()
+
+    def writeoff_worker(i):
+        req = parse_writeoff({
+            "writeoff_id": f"CC-W{i}", "plan_id": "CC-1",
+            "outbound_at": f"2026-03-21T0{i % 9}:00:00Z",
+            "lines": [{"order_id": "O-F", "batch_id": "B-SH", "qty": 1}]})
+        ok = svc.submit_writeoff(ds, req, now).accepted
+        with lock:
+            outcomes.append(ok)
+
+    def recalc_worker(i):
+        # 重算会撤回当前 ACTIVE；与核销并发时二者在同一把锁内串行
+        svc.recalc(ds, at, f"CC-R{i}", "v1", now)
+
+    threads = []
+    for i in range(12):
+        threads.append(threading.Thread(target=writeoff_worker, args=(i,)))
+    for i in range(3):
+        threads.append(threading.Thread(target=recalc_worker, args=(i,)))
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+
+    active = svc.registry.active_plans()
+    print("接受的核销数：", sum(outcomes), "/ 12（O-F 分配量 10，绝不超额）")
+    print("最终 ACTIVE 方案数：", len(active), "=>", active[0]["plan_id"])
+    assert sum(outcomes) <= 10
+    assert len(active) == 1
+    rows = {r.order_id: r for r in svc.order_execution(ds)}
+    assert rows["O-F"].shipped_qty == sum(outcomes)
+    assert rows["O-F"].shipped_qty <= 10
+    # 库存恒非负
+    for s in svc.stock_view(ds):
+        assert s.on_hand >= 0
+    print("订单执行量：", [(r.order_id, r.shipped_qty, r.remaining_qty)
+                          for r in svc.order_execution(ds)])
+    print("库存：", [(s.batch_id, s.book_balance, s.outbound_qty, s.on_hand)
+                    for s in svc.stock_view(ds)])
+
+
 if __name__ == "__main__":
     demo_wide_narrow()
     demo_quality()
@@ -296,5 +469,7 @@ if __name__ == "__main__":
     demo_invalid()
     demo_recalc()
     demo_priority()
+    demo_writeoff()
+    demo_concurrency()
     section("全部演示断言通过")
     print("输出目录：", OUT)

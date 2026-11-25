@@ -1,7 +1,9 @@
-# 批次可执行分配（规则版本 / 业务时点驱动）
+# 批次可执行分配与拣发核销（规则版本 / 业务时点驱动）
 
 按**指定规则版本**和**业务时点**，为待发订单生成可执行批次分配、未满足原因与改版差异，
-并完整保留历史发布方案。纯标准库实现，无第三方依赖。
+并完整保留历史发布方案；在此之上支持**拣发核销**：仓库登记实际出库，据此查看订单剩余
+可执行量、更新实际库存，并在重新规划时把已确认出库作为事实恰好计入一次。
+纯标准库实现，无第三方依赖。
 
 ## 1. 业务规则（实现口径）
 
@@ -43,6 +45,29 @@
 - 所有方案（含 `WITHDRAWN`）落盘保留，`history` 可查新旧两套及取代关系；
 - 同一数据集同一时点最多一个 `ACTIVE`，重复发布会被登记册拒绝。
 
+### 拣发核销（实际出库登记）
+- 核销单含**唯一单号** `writeoff_id`、**方案编号** `plan_id`、**出库时点** `outbound_at`
+  与按订单列明的**实际批次和数量**行。
+- 只接受**当前有效（ACTIVE）方案**中的订单；行内批次必须与该订单在方案中的分配批次
+  **完全一致**（`WO_BATCH_MISMATCH`）；数量为正整数，可分次出库，但同一订单累计出库
+  **不得超过原分配量**（`WO_EXCEEDS_ALLOCATED`）。
+- 一张核销单**整体接受或整体拒绝**：任一行不合法，整单不产生任何扣减。
+- **幂等**：相同单号且内容（方案/出库时点/行集合的规范哈希）相同的重送，回放首次结果且
+  **绝不重复扣减**；单号相同而内容不同，拒绝 `WO_IDEMPOTENT_CONFLICT`。拒绝单也留痕，
+  其单号不得再用于不同内容（更正后请换新单号）。
+- 已接受核销按出库时点生成为合成 `ISSUE` 事件（事件身份
+  `WRITEOFF:<单号>:<批次>`，天然按单号去重）并入事件账本；若接受本单会使任一时点账面
+  为负（**非法库存历史**），整单拒绝 `WO_NEGATIVE_HISTORY`，不用负库存补账。
+- 方案**撤回后不得**再凭其未执行部分办理新核销（`WO_PLAN_NOT_ACTIVE`）；但撤回不抹去
+  已确认出库——它们作为**实际数量事实**永久保留，在后续库存计算与重新规划中**恰好计入
+  一次**。
+- **并发口径**：核销提交、方案发布/撤回/重算都在同一把排他锁内完成（进程内 `RLock`
+  可重入 + 跨进程 `fcntl.flock`，JSON 原子替换落盘）。每个操作基于锁内读取的一致方案
+  状态与库存结果完成，因此并发的最终结果等价于某一种完整的先后串行顺序：不能超额出库，
+  方案撤回后也不可能再接受新核销。
+- 查询能力：核销记录（含拒绝原因）、订单**已出库量/剩余可执行量**（`execution`）、
+  批次**账面/已出库/实际库存**（`stock`，可按业务时点做时点视图）。
+
 ## 2. 目录结构
 
 ```
@@ -51,12 +76,14 @@ src/batch_alloc/
   engine.py     事件账本（去重/退回/负库存）、质量状态、规则选择、失效日、可用性
   planner.py    分支定界精确求解 + 独立穷举核验 + 阻断诊断
   registry.py   方案发布/撤回/重算、JSON 原子持久化、独立核验 verify_plan
-  report.py     终端可读报告
-src/cli.py      命令行入口
-sample_inputs/  7 个演示数据集（不可信输入，独立目录）
-tests/          23 项单元测试 + 100 组随机性质测试
-demo/run_demo.py 端到端演示（含错误 FCFS 对照）
-output/         运行产物（方案 JSON、登记册、日志）
+  writeoff.py   拣发核销：幂等存储、排他锁（RLock+flock）、WarehouseService 串行化、
+                合成 ISSUE 出库事实、订单执行量与库存视图、失败原因码
+  report.py     终端可读报告（方案 + 核销记录/执行量/库存）
+src/cli.py      命令行入口（plan/recalc/history/ledger/writeoff/writeoffs/execution/stock）
+sample_inputs/  7 个演示数据集 + 核销单样例（不可信输入，独立目录）
+tests/          23 项单元测试 + 24 项核销测试 + 100 组随机性质 + 40 组核销随机性质
+demo/run_demo.py 端到端演示（含错误 FCFS 对照、核销全生命周期、并发可串行化）
+output/         运行产物（方案 JSON、登记册、核销存储、日志）
 ```
 
 ## 3. 运行方式（隔离模式，防输入目录投毒）
@@ -67,9 +94,10 @@ python3 -I demo/run_demo.py
 
 # 测试
 python3 -I tests/test_batch_alloc.py
+python3 -I tests/test_writeoff.py
 python3 -I tests/test_random_property.py
 
-# CLI
+# CLI：分配
 python3 -I src/cli.py plan   --input sample_inputs/demo_wide_narrow.json \
                              --as-of 2026-06-01T00:00:00Z \
                              --registry output/registry.json --out output/p.json
@@ -79,9 +107,41 @@ python3 -I src/cli.py recalc --input sample_inputs/demo_shelf.json \
 python3 -I src/cli.py history --registry output/registry.json
 python3 -I src/cli.py ledger  --input sample_inputs/demo_returns.json \
                              --as-of 2026-06-01T00:00:00Z
+
+# CLI：拣发核销（--store 默认取登记册同目录 writeoffs.json）
+python3 -I src/cli.py writeoff  --input sample_inputs/demo_shelf.json \
+                                --doc sample_inputs/writeoff_shelf_001.json \
+                                --registry output/registry.json
+python3 -I src/cli.py writeoffs --registry output/registry.json [--status ACCEPTED|REJECTED]
+python3 -I src/cli.py execution --input sample_inputs/demo_shelf.json \
+                                --registry output/registry.json
+python3 -I src/cli.py stock     --input sample_inputs/demo_shelf.json \
+                                --registry output/registry.json \
+                                [--as-of 2026-03-21T09:00:00Z]
 ```
 
-无效历史退出码为 `3`；核验失败退出码为 `2`。
+无效历史退出码为 `3`；核验失败退出码为 `2`；核销单被拒绝退出码为 `4`；
+登记册错误退出码为 `5`。核销接受（含幂等重送命中）退出码为 `0`。
+
+### 核销单 JSON 结构
+
+```json
+{
+  "writeoff_id": "WO-SH-001",
+  "plan_id": "RC-V1",
+  "outbound_at": "2026-03-21T09:00:00Z",
+  "lines": [
+    {"order_id": "O-F", "batch_id": "B-SH", "qty": 4},
+    {"order_id": "O-G", "batch_id": "B-SH2", "qty": 6}
+  ]
+}
+```
+
+- 时间同样强制带时区；`qty` 为正整数；同一单据内每个订单只能出现一行。
+- 提交时 `--input` 数据集的名称与输入哈希必须与方案发布口径一致，否则
+  `WO_DATASET_MISMATCH`。
+- 核销存储为独立 JSON（默认 `writeoffs.json`，配套 `.lock` 锁文件），与方案登记册
+  分开落盘、协同加锁。
 
 ## 4. 输入 JSON 结构
 
@@ -134,3 +194,14 @@ python3 -I src/cli.py ledger  --input sample_inputs/demo_returns.json \
 ### 5.6 召回后重算（登记册 `output/registry.json`）
 `RC-V1(ACTIVE) → RC-V2(WITHDRAWN，规则改版) → RC-V3(ACTIVE，召回后)`，
 全程仅一个 ACTIVE，旧记录可查，占用合计始终不超账本余量。
+
+### 5.7 拣发核销（`writeoff_shelf_*.json`，演示场景 8/9）
+- `RC-V1` 为 O-F(B-SH,10)、O-G(B-SH2,10) 分配后：`WO-SH-001` 一次出 O-F=4、O-G=6
+  整体接受；同内容重送幂等命中不重复扣减；同号异内容拒绝。
+- 错批次单（O-G 报 B-SH）与超分配单（O-F 累计 11>10）均**整单拒绝且零扣减**；
+  更正后换新单号出 6，O-F 累计恰好 10、剩余可执行量为 0。
+- 撤回 `RC-V1` 后新核销被 `WO_PLAN_NOT_ACTIVE` 拒绝，但已确认的 O-F=10、O-G=6
+  作为事实保留；`recalc` 新方案基于含合成 `ISSUE` 的账本求解，B-SH 实际库存 90、
+  B-SH2 实际库存 94，出库事实恰好计入一次。
+- 并发演示：12 线程核销叠加 3 线程重算，最终仅 10 张出库被接受（分配量上限），
+  仅一个 ACTIVE 方案，库存恒非负——结果等价于某种完整串行顺序。

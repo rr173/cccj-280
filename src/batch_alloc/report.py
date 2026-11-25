@@ -3,6 +3,10 @@ from __future__ import annotations
 
 from .engine import REASON_TEXT
 from .planner import PlanResult
+from .writeoff import (
+    BatchStock, OrderExecution, WriteOffRecord, WriteOffRequest,
+    WO_REASON_TEXT,
+)
 
 
 def render_plan(result: PlanResult, verification: dict | None = None) -> str:
@@ -70,5 +74,83 @@ def render_plan(result: PlanResult, verification: dict | None = None) -> str:
             for err in verification["errors"]:
                 lines.append(f"  ERROR: {err}")
         lines.append(f"  批次占用: {verification['batch_usage']}")
+    lines.append("=" * 78)
+    return "\n".join(lines)
+
+
+def render_writeoff_result(req: WriteOffRequest, result) -> str:
+    """渲染单次核销提交结果（接受/拒绝、幂等重送、失败原因）。"""
+    rec = result.record
+    lines: list[str] = []
+    lines.append("=" * 78)
+    head = "接受" if result.accepted else "拒绝"
+    dup = "（重送命中，未重复扣减）" if result.duplicate else ""
+    lines.append(f"核销单 {rec.writeoff_id} | 方案 {rec.plan_id} | "
+                 f"出库时点 {rec.outbound_at.isoformat()} => {head}{dup}")
+    lines.append("=" * 78)
+    lines.append(f"  内容哈希: {rec.content_hash}")
+    lines.append("  出库行：")
+    for ln in sorted(rec.lines, key=lambda x: x.order_id):
+        lines.append(f"    订单 {ln.order_id:<10} 批次 {ln.batch_id:<10} 数量 {ln.qty}")
+    if rec.plan_snapshot is not None:
+        snap = rec.plan_snapshot
+        lines.append(f"  接受时方案快照: {snap.plan_id}({snap.status}) "
+                     f"数据集={snap.dataset_name} 时点={snap.as_of}")
+    if rec.failures:
+        lines.append("  失败原因（整单未产生任何扣减）：")
+        for f in rec.failures:
+            lines.append(f"    [{f.code}] {WO_REASON_TEXT.get(f.code, f.code)}")
+            lines.append(f"        {f.detail}")
+    lines.append("=" * 78)
+    return "\n".join(lines)
+
+
+def render_writeoff_records(records: list[WriteOffRecord]) -> str:
+    lines: list[str] = []
+    lines.append("=" * 78)
+    lines.append(f"核销记录（共 {len(records)} 张，按提交时间）")
+    lines.append("=" * 78)
+    if not records:
+        lines.append("  （无）")
+        return "\n".join(lines)
+    for rec in sorted(records, key=lambda r: (r.submitted_at, r.writeoff_id)):
+        lines.append(f"{rec.writeoff_id:<10} {rec.status:<9} 方案={rec.plan_id:<8} "
+                     f"出库时点={rec.outbound_at.isoformat()} "
+                     f"行数={len(rec.lines)} 合计="
+                     f"{sum(ln.qty for ln in rec.lines)}")
+        for ln in sorted(rec.lines, key=lambda x: x.order_id):
+            lines.append(f"    订单 {ln.order_id:<10} 批次 {ln.batch_id:<10} 数量 {ln.qty}")
+        if rec.failures:
+            for f in rec.failures:
+                lines.append(f"    拒绝: [{f.code}] {f.detail}")
+    lines.append("=" * 78)
+    return "\n".join(lines)
+
+
+def render_order_execution(rows: list[OrderExecution]) -> str:
+    lines: list[str] = []
+    lines.append("=" * 78)
+    lines.append("订单已出库量与剩余可执行量（已接受出库为实际事实，恰好计入一次）")
+    lines.append("=" * 78)
+    lines.append(f"  {'订单':<10}{'方案批次':<12}{'原分配':>8}{'已出库':>8}{'剩余可执行':>12}")
+    for r in rows:
+        lines.append(f"  {r.order_id:<10}{(r.allocated_batch or '-'):<12}"
+                     f"{r.allocated_qty:>8}{r.shipped_qty:>8}{r.remaining_qty:>12}")
+    lines.append("=" * 78)
+    return "\n".join(lines)
+
+
+def render_stock(rows: list[BatchStock], at=None) -> str:
+    lines: list[str] = []
+    lines.append("=" * 78)
+    title = "批次库存（账面 / 已核销出库 / 实际库存）"
+    if at is not None:
+        title += f" 截至 {at.isoformat()}"
+    lines.append(title)
+    lines.append("=" * 78)
+    lines.append(f"  {'批次':<12}{'账面余量':>10}{'已出库':>10}{'实际库存':>10}")
+    for r in rows:
+        lines.append(f"  {r.batch_id:<12}{r.book_balance:>10}"
+                     f"{r.outbound_qty:>10}{r.on_hand:>10}")
     lines.append("=" * 78)
     return "\n".join(lines)

@@ -1,0 +1,9 @@
+{
+  "writeoff_id": "WO-SH-001",
+  "plan_id": "RC-V1",
+  "outbound_at": "2026-03-21T09:00:00Z",
+  "lines": [
+    {"order_id": "O-F", "batch_id": "B-SH", "qty": 4},
+    {"order_id": "O-G", "batch_id": "B-SH2", "qty": 6}
+  ]
+}

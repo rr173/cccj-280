@@ -1,0 +1,160 @@
+{
+  "writeoffs": [
+    {
+      "content_hash": "981d6e3ef449d486",
+      "duplicate": false,
+      "failures": [],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 4
+        },
+        {
+          "batch_id": "B-SH2",
+          "order_id": "O-G",
+          "qty": 6
+        }
+      ],
+      "outbound_at": "2026-03-21T09:00:00+00:00",
+      "plan_id": "RC-V1",
+      "plan_snapshot": {
+        "allocations": [
+          {
+            "batch_id": "B-SH",
+            "expiry": "2026-03-31T00:00:00+08:00",
+            "order_id": "O-F",
+            "qty": 10,
+            "rule_id": "R-F-V1"
+          },
+          {
+            "batch_id": "B-SH2",
+            "expiry": "2026-03-31T00:00:00+00:00",
+            "order_id": "O-G",
+            "qty": 10,
+            "rule_id": "R-G-V1"
+          }
+        ],
+        "as_of": "2026-03-20T00:00:00+00:00",
+        "dataset_name": "shelf_boundary",
+        "input_hash": "c0459ab2fa6aa9aa",
+        "plan_id": "RC-V1",
+        "rule_version": "v1",
+        "status": "ACTIVE"
+      },
+      "status": "ACCEPTED",
+      "submitted_at": "2026-11-25T06:24:49.022841+00:00",
+      "writeoff_id": "WO-SH-001"
+    },
+    {
+      "content_hash": "30525e2451ea2175",
+      "duplicate": false,
+      "failures": [
+        {
+          "code": "WO_BATCH_MISMATCH",
+          "detail": "订单 O-G 方案批次=B-SH2，实际批次=B-SH"
+        }
+      ],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-G",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-22T10:00:00+00:00",
+      "plan_id": "RC-V1",
+      "plan_snapshot": null,
+      "status": "REJECTED",
+      "submitted_at": "2026-11-25T06:24:49.022841+00:00",
+      "writeoff_id": "WO-SH-BADBATCH"
+    },
+    {
+      "content_hash": "7980d34f0b7ce563",
+      "duplicate": false,
+      "failures": [
+        {
+          "code": "WO_EXCEEDS_ALLOCATED",
+          "detail": "订单 O-F 原分配 10，已出库 4，本单 7，累计 11 超量"
+        }
+      ],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 7
+        }
+      ],
+      "outbound_at": "2026-03-22T09:00:00+00:00",
+      "plan_id": "RC-V1",
+      "plan_snapshot": null,
+      "status": "REJECTED",
+      "submitted_at": "2026-11-25T06:24:49.022841+00:00",
+      "writeoff_id": "WO-SH-002"
+    },
+    {
+      "content_hash": "49cdeeb58ebc3451",
+      "duplicate": false,
+      "failures": [],
+      "lines": [
+        {
+          "batch_id": "B-SH",
+          "order_id": "O-F",
+          "qty": 6
+        }
+      ],
+      "outbound_at": "2026-03-22T09:00:00+00:00",
+      "plan_id": "RC-V1",
+      "plan_snapshot": {
+        "allocations": [
+          {
+            "batch_id": "B-SH",
+            "expiry": "2026-03-31T00:00:00+08:00",
+            "order_id": "O-F",
+            "qty": 10,
+            "rule_id": "R-F-V1"
+          },
+          {
+            "batch_id": "B-SH2",
+            "expiry": "2026-03-31T00:00:00+00:00",
+            "order_id": "O-G",
+            "qty": 10,
+            "rule_id": "R-G-V1"
+          }
+        ],
+        "as_of": "2026-03-20T00:00:00+00:00",
+        "dataset_name": "shelf_boundary",
+        "input_hash": "c0459ab2fa6aa9aa",
+        "plan_id": "RC-V1",
+        "rule_version": "v1",
+        "status": "ACTIVE"
+      },
+      "status": "ACCEPTED",
+      "submitted_at": "2026-11-25T06:24:49.022841+00:00",
+      "writeoff_id": "WO-SH-002B"
+    },
+    {
+      "content_hash": "3cafe4330d111862",
+      "duplicate": false,
+      "failures": [
+        {
+          "code": "WO_PLAN_NOT_ACTIVE",
+          "detail": "方案 RC-V1 状态=WITHDRAWN；方案不是当前有效方案（已撤回），其未执行部分不得再办理新核销"
+        }
+      ],
+      "lines": [
+        {
+          "batch_id": "B-SH2",
+          "order_id": "O-G",
+          "qty": 1
+        }
+      ],
+      "outbound_at": "2026-03-23T09:00:00+00:00",
+      "plan_id": "RC-V1",
+      "plan_snapshot": null,
+      "status": "REJECTED",
+      "submitted_at": "2026-11-25T06:24:49.022841+00:00",
+      "writeoff_id": "WO-LATE"
+    }
+  ]
+}
