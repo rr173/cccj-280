@@ -1,0 +1,19 @@
+{
+  "name": "negative_stock",
+  "batches": [
+    {"batch_id": "B-N", "production_date": "2026-01-01", "purposes": ["F"], "initial_status": "QUARANTINED"}
+  ],
+  "quantity_events": [
+    {"event_id": "EV-501", "batch_id": "B-N", "type": "RECEIPT", "qty": 100, "effective_at": "2026-01-03T08:00:00Z"},
+    {"event_id": "EV-502", "batch_id": "B-N", "type": "ISSUE",   "qty": 120, "effective_at": "2026-02-01T09:00:00Z"}
+  ],
+  "status_events": [
+    {"event_id": "EV-S50", "batch_id": "B-N", "status": "RELEASED", "effective_at": "2026-01-04T00:00:00Z", "evidence_id": "EV-Q50"}
+  ],
+  "shelf_rules": [
+    {"rule_id": "R-GEN-V1", "purpose": null, "version": "v1", "effective_at": "2025-01-01T00:00:00Z", "shelf_life_days": 720, "timezone": "UTC"}
+  ],
+  "orders": [
+    {"order_id": "O-N", "purpose": "F", "qty": 10, "priority": 10}
+  ]
+}

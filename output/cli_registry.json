@@ -1,0 +1,111 @@
+{
+  "plans": [
+    {
+      "created_at": "2026-11-25T02:54:13.794084+00:00",
+      "plan_id": "CLI-1",
+      "result": {
+        "allocations": [
+          {
+            "batch_id": "B-A",
+            "expiry": "2027-12-22T00:00:00+00:00",
+            "order_id": "O-A",
+            "qty": 100,
+            "rule_id": "R-GEN-V1"
+          },
+          {
+            "batch_id": "B-WIDE",
+            "expiry": "2027-12-22T00:00:00+00:00",
+            "order_id": "O-B",
+            "qty": 100,
+            "rule_id": "R-GEN-V1"
+          }
+        ],
+        "as_of": "2026-06-01T00:00:00+00:00",
+        "balances": {
+          "B-A": 100,
+          "B-WIDE": 100
+        },
+        "blocked": [],
+        "dataset_name": "wide_narrow",
+        "input_hash": "b06c0092e0d0b52c",
+        "objective": [
+          2,
+          200
+        ],
+        "plan_id": "CLI-1",
+        "priority_levels": [
+          10
+        ],
+        "rejected_returns": [],
+        "rule_version": null,
+        "solver": "branch_and_bound"
+      },
+      "status": "ACTIVE",
+      "supersedes": null
+    },
+    {
+      "created_at": "2026-11-25T02:54:20.114577+00:00",
+      "plan_id": "CLI-2",
+      "result": {
+        "allocations": [
+          {
+            "batch_id": "B-SH2",
+            "expiry": "2026-03-31T00:00:00+00:00",
+            "order_id": "O-G",
+            "qty": 10,
+            "rule_id": "R-G-V2"
+          }
+        ],
+        "as_of": "2026-03-20T00:00:00+00:00",
+        "balances": {
+          "B-SH": 100,
+          "B-SH2": 100
+        },
+        "blocked": [
+          {
+            "detail": "按用途保质期规则已过期（失效日当天即过期）；该批次用途不覆盖订单用途",
+            "order_id": "O-F",
+            "per_batch": [
+              {
+                "balance": 100,
+                "batch_id": "B-SH",
+                "detail": "业务时点 2026-03-20T00:00:00+00:00 >= 失效日 2026-03-16T00:00:00+08:00 （规则 R-F-V2，时区 Asia/Shanghai）",
+                "expiry": "2026-03-16T00:00:00+08:00",
+                "ok": false,
+                "reason": "EXPIRED",
+                "rule_id": "R-F-V2",
+                "status": "RELEASED"
+              },
+              {
+                "balance": 100,
+                "batch_id": "B-SH2",
+                "detail": "批次用途 ['G'] 不覆盖 'F'",
+                "expiry": null,
+                "ok": false,
+                "reason": "PURPOSE_NOT_ALLOWED",
+                "rule_id": null,
+                "status": "RELEASED"
+              }
+            ],
+            "reason": "NO_ELIGIBLE_BATCH"
+          }
+        ],
+        "dataset_name": "shelf_boundary",
+        "input_hash": "c0459ab2fa6aa9aa",
+        "objective": [
+          1,
+          10
+        ],
+        "plan_id": "CLI-2",
+        "priority_levels": [
+          10
+        ],
+        "rejected_returns": [],
+        "rule_version": "v2",
+        "solver": "branch_and_bound"
+      },
+      "status": "ACTIVE",
+      "supersedes": null
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "allocations": [
+    {
+      "batch_id": "B-SH",
+      "expiry": "2026-03-31T00:00:00+08:00",
+      "order_id": "O-F",
+      "qty": 10,
+      "rule_id": "R-F-V1"
+    },
+    {
+      "batch_id": "B-SH2",
+      "expiry": "2026-03-31T00:00:00+00:00",
+      "order_id": "O-G",
+      "qty": 10,
+      "rule_id": "R-G-V1"
+    }
+  ],
+  "as_of": "2026-03-20T00:00:00+00:00",
+  "balances": {
+    "B-SH": 100,
+    "B-SH2": 100
+  },
+  "blocked": [],
+  "dataset_name": "shelf_boundary",
+  "input_hash": "c0459ab2fa6aa9aa",
+  "objective": [
+    2,
+    20
+  ],
+  "plan_id": "SH-V1",
+  "priority_levels": [
+    10
+  ],
+  "rejected_returns": [],
+  "rule_version": "v1",
+  "solver": "branch_and_bound"
+}

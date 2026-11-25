@@ -1,0 +1,27 @@
+{
+  "name": "returns",
+  "batches": [
+    {"batch_id": "B-R1", "production_date": "2026-01-01", "purposes": ["F"], "initial_status": "QUARANTINED"},
+    {"batch_id": "B-R2", "production_date": "2026-01-01", "purposes": ["F"], "initial_status": "QUARANTINED"}
+  ],
+  "quantity_events": [
+    {"event_id": "EV-201", "batch_id": "B-R1", "type": "RECEIPT", "qty": 100, "effective_at": "2026-01-03T08:00:00Z"},
+    {"event_id": "EV-202", "batch_id": "B-R2", "type": "RECEIPT", "qty": 100, "effective_at": "2026-01-03T08:05:00Z"},
+    {"event_id": "EV-203", "batch_id": "B-R1", "type": "ISSUE",   "qty": 30,  "effective_at": "2026-02-01T09:00:00Z"},
+    {"event_id": "EV-204", "batch_id": "B-R2", "type": "ISSUE",   "qty": 50,  "effective_at": "2026-02-01T09:05:00Z"},
+    {"event_id": "EV-205", "batch_id": "B-R1", "type": "RETURN",  "qty": 10,  "effective_at": "2026-03-01T10:00:00Z", "sealed": true,  "accepted": true,  "note": "未拆封且验收合格，入账"},
+    {"event_id": "EV-206", "batch_id": "B-R1", "type": "RETURN",  "qty": 7,   "effective_at": "2026-03-02T10:00:00Z", "sealed": false, "accepted": true,  "note": "已拆封，拒绝入账"},
+    {"event_id": "EV-207", "batch_id": "B-R1", "type": "RETURN",  "qty": 5,   "effective_at": "2026-03-03T10:00:00Z", "sealed": true,  "accepted": false, "note": "验收不合格，拒绝入账"}
+  ],
+  "status_events": [
+    {"event_id": "EV-S20", "batch_id": "B-R1", "status": "RELEASED", "effective_at": "2026-01-04T00:00:00Z", "evidence_id": "EV-Q20"},
+    {"event_id": "EV-S21", "batch_id": "B-R2", "status": "RELEASED", "effective_at": "2026-01-04T00:00:00Z", "evidence_id": "EV-Q21"}
+  ],
+  "shelf_rules": [
+    {"rule_id": "R-GEN-V1", "purpose": null, "version": "v1", "effective_at": "2025-01-01T00:00:00Z", "shelf_life_days": 720, "timezone": "UTC"}
+  ],
+  "orders": [
+    {"order_id": "O-EXACT", "purpose": "F", "qty": 80, "priority": 10},
+    {"order_id": "O-SHORT", "purpose": "F", "qty": 51, "priority": 10}
+  ]
+}

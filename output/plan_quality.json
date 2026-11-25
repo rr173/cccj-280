@@ -1,0 +1,317 @@
+{
+  "allocations": [
+    {
+      "batch_id": "B-OK",
+      "expiry": "2027-12-22T00:00:00+00:00",
+      "order_id": "O-OK1",
+      "qty": 10,
+      "rule_id": "R-GEN-V1"
+    },
+    {
+      "batch_id": "B-OK",
+      "expiry": "2027-12-22T00:00:00+00:00",
+      "order_id": "O-OK2",
+      "qty": 10,
+      "rule_id": "R-GEN-V1"
+    },
+    {
+      "batch_id": "B-Q2",
+      "expiry": "2027-12-22T00:00:00+00:00",
+      "order_id": "O-Q2",
+      "qty": 10,
+      "rule_id": "R-GEN-V1"
+    }
+  ],
+  "as_of": "2026-06-01T00:00:00+00:00",
+  "balances": {
+    "B-EXP": 100,
+    "B-NE": 100,
+    "B-OK": 100,
+    "B-Q": 100,
+    "B-Q2": 100,
+    "B-REC": 100
+  },
+  "blocked": [
+    {
+      "detail": "按用途保质期规则已过期（失效日当天即过期）；该批次用途不覆盖订单用途",
+      "order_id": "O-EXP",
+      "per_batch": [
+        {
+          "balance": 100,
+          "batch_id": "B-EXP",
+          "detail": "业务时点 2026-06-01T00:00:00+00:00 >= 失效日 2025-12-21T00:00:00+00:00 （规则 R-GEN-V1，时区 UTC）",
+          "expiry": "2025-12-21T00:00:00+00:00",
+          "ok": false,
+          "reason": "EXPIRED",
+          "rule_id": "R-GEN-V1",
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-NE",
+          "detail": "批次用途 ['FNE'] 不覆盖 'FEXP'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-OK",
+          "detail": "批次用途 ['F'] 不覆盖 'FEXP'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-Q",
+          "detail": "批次用途 ['FQ'] 不覆盖 'FEXP'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "QUARANTINED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-Q2",
+          "detail": "批次用途 ['FQ2'] 不覆盖 'FEXP'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-REC",
+          "detail": "批次用途 ['FREC'] 不覆盖 'FEXP'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RECALLED"
+        }
+      ],
+      "reason": "NO_ELIGIBLE_BATCH"
+    },
+    {
+      "detail": "该批次用途不覆盖订单用途；放行缺少质量证据，质量证据缺失不得分配",
+      "order_id": "O-NE",
+      "per_batch": [
+        {
+          "balance": 100,
+          "batch_id": "B-EXP",
+          "detail": "批次用途 ['FEXP'] 不覆盖 'FNE'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-NE",
+          "detail": "放行状态但缺失质量证据",
+          "expiry": null,
+          "ok": false,
+          "reason": "QUALITY_EVIDENCE_MISSING",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-OK",
+          "detail": "批次用途 ['F'] 不覆盖 'FNE'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-Q",
+          "detail": "批次用途 ['FQ'] 不覆盖 'FNE'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "QUARANTINED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-Q2",
+          "detail": "批次用途 ['FQ2'] 不覆盖 'FNE'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-REC",
+          "detail": "批次用途 ['FREC'] 不覆盖 'FNE'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RECALLED"
+        }
+      ],
+      "reason": "NO_ELIGIBLE_BATCH"
+    },
+    {
+      "detail": "该批次用途不覆盖订单用途；批次处于隔离状态，不得分配（解除隔离不增加账面量）",
+      "order_id": "O-Q",
+      "per_batch": [
+        {
+          "balance": 100,
+          "batch_id": "B-EXP",
+          "detail": "批次用途 ['FEXP'] 不覆盖 'FQ'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-NE",
+          "detail": "批次用途 ['FNE'] 不覆盖 'FQ'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-OK",
+          "detail": "批次用途 ['F'] 不覆盖 'FQ'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-Q",
+          "detail": "隔离状态",
+          "expiry": null,
+          "ok": false,
+          "reason": "QUARANTINED",
+          "rule_id": null,
+          "status": "QUARANTINED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-Q2",
+          "detail": "批次用途 ['FQ2'] 不覆盖 'FQ'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-REC",
+          "detail": "批次用途 ['FREC'] 不覆盖 'FQ'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RECALLED"
+        }
+      ],
+      "reason": "NO_ELIGIBLE_BATCH"
+    },
+    {
+      "detail": "该批次用途不覆盖订单用途；批次处于召回状态，不得分配",
+      "order_id": "O-REC",
+      "per_batch": [
+        {
+          "balance": 100,
+          "batch_id": "B-EXP",
+          "detail": "批次用途 ['FEXP'] 不覆盖 'FREC'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-NE",
+          "detail": "批次用途 ['FNE'] 不覆盖 'FREC'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-OK",
+          "detail": "批次用途 ['F'] 不覆盖 'FREC'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-Q",
+          "detail": "批次用途 ['FQ'] 不覆盖 'FREC'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "QUARANTINED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-Q2",
+          "detail": "批次用途 ['FQ2'] 不覆盖 'FREC'",
+          "expiry": null,
+          "ok": false,
+          "reason": "PURPOSE_NOT_ALLOWED",
+          "rule_id": null,
+          "status": "RELEASED"
+        },
+        {
+          "balance": 100,
+          "batch_id": "B-REC",
+          "detail": "召回状态",
+          "expiry": null,
+          "ok": false,
+          "reason": "RECALLED",
+          "rule_id": null,
+          "status": "RECALLED"
+        }
+      ],
+      "reason": "NO_ELIGIBLE_BATCH"
+    }
+  ],
+  "dataset_name": "quality_gates",
+  "input_hash": "615c0095f642abe2",
+  "objective": [
+    3,
+    30
+  ],
+  "plan_id": "QG-1",
+  "priority_levels": [
+    10
+  ],
+  "rejected_returns": [],
+  "rule_version": null,
+  "solver": "branch_and_bound"
+}

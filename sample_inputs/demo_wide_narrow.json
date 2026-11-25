@@ -1,0 +1,22 @@
+{
+  "name": "wide_narrow",
+  "batches": [
+    {"batch_id": "B-WIDE", "production_date": "2026-01-01", "purposes": ["A", "B"], "initial_status": "QUARANTINED"},
+    {"batch_id": "B-A",    "production_date": "2026-01-01", "purposes": ["A"],      "initial_status": "QUARANTINED"}
+  ],
+  "quantity_events": [
+    {"event_id": "EV-001", "batch_id": "B-WIDE", "type": "RECEIPT", "qty": 100, "effective_at": "2026-01-03T08:00:00Z"},
+    {"event_id": "EV-002", "batch_id": "B-A",    "type": "RECEIPT", "qty": 100, "effective_at": "2026-01-03T08:05:00Z"}
+  ],
+  "status_events": [
+    {"event_id": "EV-S1", "batch_id": "B-WIDE", "status": "RELEASED", "effective_at": "2026-01-04T00:00:00Z", "evidence_id": "EV-Q1"},
+    {"event_id": "EV-S2", "batch_id": "B-A",    "status": "RELEASED", "effective_at": "2026-01-04T00:00:00Z", "evidence_id": "EV-Q2"}
+  ],
+  "shelf_rules": [
+    {"rule_id": "R-GEN-V1", "purpose": null, "version": "v1", "effective_at": "2025-01-01T00:00:00Z", "shelf_life_days": 720, "timezone": "UTC"}
+  ],
+  "orders": [
+    {"order_id": "O-A", "purpose": "A", "qty": 100, "priority": 10},
+    {"order_id": "O-B", "purpose": "B", "qty": 100, "priority": 10}
+  ]
+}

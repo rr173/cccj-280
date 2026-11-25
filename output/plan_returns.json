@@ -1,0 +1,81 @@
+{
+  "allocations": [
+    {
+      "batch_id": "B-R1",
+      "expiry": "2027-12-22T00:00:00+00:00",
+      "order_id": "O-EXACT",
+      "qty": 80,
+      "rule_id": "R-GEN-V1"
+    }
+  ],
+  "as_of": "2026-06-01T00:00:00+00:00",
+  "balances": {
+    "B-R1": 80,
+    "B-R2": 50
+  },
+  "blocked": [
+    {
+      "detail": "存在可用批次，但单批容量无法同时容纳全部订单，整体最优下本单未满足",
+      "order_id": "O-SHORT",
+      "per_batch": [
+        {
+          "balance": 80,
+          "batch_id": "B-R1",
+          "detail": "余量 80，失效日 2027-12-22T00:00:00+00:00",
+          "expiry": "2027-12-22T00:00:00+00:00",
+          "ok": true,
+          "reason": null,
+          "rule_id": "R-GEN-V1",
+          "status": "RELEASED"
+        },
+        {
+          "balance": 50,
+          "batch_id": "B-R2",
+          "detail": "余量 50 < 需求 51（不可拆批/部分满足）",
+          "expiry": "2027-12-22T00:00:00+00:00",
+          "ok": false,
+          "reason": "INSUFFICIENT_BALANCE",
+          "rule_id": "R-GEN-V1",
+          "status": "RELEASED"
+        }
+      ],
+      "reason": "OPTIMAL_TRADEOFF"
+    }
+  ],
+  "dataset_name": "returns",
+  "input_hash": "826eaf13b401f3cd",
+  "objective": [
+    1,
+    80
+  ],
+  "plan_id": "RT-1",
+  "priority_levels": [
+    10
+  ],
+  "rejected_returns": [
+    {
+      "balance_after": 80,
+      "batch_id": "B-R1",
+      "counted": false,
+      "delta": 0,
+      "effective_at": "2026-03-02T10:00:00+00:00",
+      "etype": "RETURN",
+      "event_id": "EV-206",
+      "note": "已拆封，拒绝入账",
+      "reject_reason": "REJECTED_RETURN:已拆封"
+    },
+    {
+      "balance_after": 80,
+      "batch_id": "B-R1",
+      "counted": false,
+      "delta": 0,
+      "effective_at": "2026-03-03T10:00:00+00:00",
+      "etype": "RETURN",
+      "event_id": "EV-207",
+      "note": "验收不合格，拒绝入账",
+      "reject_reason": "REJECTED_RETURN:验收不合格"
+    }
+  ],
+  "rule_version": null,
+  "solver": "branch_and_bound"
+}

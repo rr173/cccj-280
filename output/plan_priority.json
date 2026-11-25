@@ -1,0 +1,66 @@
+{
+  "allocations": [
+    {
+      "batch_id": "B-P",
+      "expiry": "2027-12-22T00:00:00+00:00",
+      "order_id": "O-HI",
+      "qty": 100,
+      "rule_id": "R-GEN-V1"
+    }
+  ],
+  "as_of": "2026-06-01T00:00:00+00:00",
+  "balances": {
+    "B-P": 100
+  },
+  "blocked": [
+    {
+      "detail": "批次须让位于更高优先级订单（整体最优下本单未满足）",
+      "order_id": "O-LO1",
+      "per_batch": [
+        {
+          "balance": 100,
+          "batch_id": "B-P",
+          "detail": "余量 100，失效日 2027-12-22T00:00:00+00:00",
+          "expiry": "2027-12-22T00:00:00+00:00",
+          "ok": true,
+          "reason": null,
+          "rule_id": "R-GEN-V1",
+          "status": "RELEASED"
+        }
+      ],
+      "reason": "DISPLACED_BY_HIGHER_PRIORITY"
+    },
+    {
+      "detail": "批次须让位于更高优先级订单（整体最优下本单未满足）",
+      "order_id": "O-LO2",
+      "per_batch": [
+        {
+          "balance": 100,
+          "batch_id": "B-P",
+          "detail": "余量 100，失效日 2027-12-22T00:00:00+00:00",
+          "expiry": "2027-12-22T00:00:00+00:00",
+          "ok": true,
+          "reason": null,
+          "rule_id": "R-GEN-V1",
+          "status": "RELEASED"
+        }
+      ],
+      "reason": "DISPLACED_BY_HIGHER_PRIORITY"
+    }
+  ],
+  "dataset_name": "priority_tradeoff",
+  "input_hash": "d267cf7bf915841c",
+  "objective": [
+    1,
+    0,
+    100
+  ],
+  "plan_id": "PR-1",
+  "priority_levels": [
+    100,
+    1
+  ],
+  "rejected_returns": [],
+  "rule_version": null,
+  "solver": "branch_and_bound"
+}

@@ -1,0 +1,43 @@
+{
+  "name": "quality_gates",
+  "batches": [
+    {"batch_id": "B-OK",   "production_date": "2026-01-01", "purposes": ["F"],    "initial_status": "QUARANTINED"},
+    {"batch_id": "B-REC",  "production_date": "2026-01-01", "purposes": ["FREC"], "initial_status": "QUARANTINED"},
+    {"batch_id": "B-Q",    "production_date": "2026-01-01", "purposes": ["FQ"],   "initial_status": "QUARANTINED"},
+    {"batch_id": "B-Q2",   "production_date": "2026-01-01", "purposes": ["FQ2"],  "initial_status": "QUARANTINED"},
+    {"batch_id": "B-NE",   "production_date": "2026-01-01", "purposes": ["FNE"],  "initial_status": "QUARANTINED"},
+    {"batch_id": "B-EXP",  "production_date": "2024-01-01", "purposes": ["FEXP"], "initial_status": "QUARANTINED"}
+  ],
+  "quantity_events": [
+    {"event_id": "EV-101", "batch_id": "B-OK",  "type": "RECEIPT", "qty": 100, "effective_at": "2026-01-03T08:00:00Z"},
+    {"event_id": "EV-102", "batch_id": "B-REC", "type": "RECEIPT", "qty": 100, "effective_at": "2026-01-03T08:00:00Z"},
+    {"event_id": "EV-103", "batch_id": "B-Q",   "type": "RECEIPT", "qty": 100, "effective_at": "2026-01-03T08:00:00Z"},
+    {"event_id": "EV-104", "batch_id": "B-Q2",  "type": "RECEIPT", "qty": 100, "effective_at": "2026-01-03T08:00:00Z"},
+    {"event_id": "EV-105", "batch_id": "B-NE",  "type": "RECEIPT", "qty": 100, "effective_at": "2026-01-03T08:00:00Z"},
+    {"event_id": "EV-106", "batch_id": "B-EXP", "type": "RECEIPT", "qty": 100, "effective_at": "2024-01-03T08:00:00Z"}
+  ],
+  "status_events": [
+    {"event_id": "EV-S10", "batch_id": "B-OK",  "status": "RELEASED",    "effective_at": "2026-01-04T00:00:00Z", "evidence_id": "EV-Q10"},
+    {"event_id": "EV-S11", "batch_id": "B-REC", "status": "RELEASED",    "effective_at": "2026-01-04T00:00:00Z", "evidence_id": "EV-Q11"},
+    {"event_id": "EV-S12", "batch_id": "B-REC", "status": "RECALLED",    "effective_at": "2026-03-01T00:00:00Z"},
+    {"event_id": "EV-S13", "batch_id": "B-Q",   "status": "RELEASED",    "effective_at": "2026-01-04T00:00:00Z", "evidence_id": "EV-Q13"},
+    {"event_id": "EV-S14", "batch_id": "B-Q",   "status": "QUARANTINED", "effective_at": "2026-03-01T00:00:00Z"},
+    {"event_id": "EV-S15", "batch_id": "B-Q2",  "status": "RELEASED",    "effective_at": "2026-01-04T00:00:00Z", "evidence_id": "EV-Q15"},
+    {"event_id": "EV-S16", "batch_id": "B-Q2",  "status": "QUARANTINED", "effective_at": "2026-03-01T00:00:00Z"},
+    {"event_id": "EV-S17", "batch_id": "B-Q2",  "status": "RELEASED",    "effective_at": "2026-05-01T00:00:00Z", "evidence_id": "EV-Q17"},
+    {"event_id": "EV-S18", "batch_id": "B-NE",  "status": "RELEASED",    "effective_at": "2026-01-04T00:00:00Z"},
+    {"event_id": "EV-S19", "batch_id": "B-EXP", "status": "RELEASED",    "effective_at": "2024-01-04T00:00:00Z", "evidence_id": "EV-Q19"}
+  ],
+  "shelf_rules": [
+    {"rule_id": "R-GEN-V1", "purpose": null, "version": "v1", "effective_at": "2023-01-01T00:00:00Z", "shelf_life_days": 720, "timezone": "UTC"}
+  ],
+  "orders": [
+    {"order_id": "O-OK1", "purpose": "F",    "qty": 10, "priority": 10},
+    {"order_id": "O-OK2", "purpose": "F",    "qty": 10, "priority": 10},
+    {"order_id": "O-REC", "purpose": "FREC", "qty": 10, "priority": 10},
+    {"order_id": "O-Q",   "purpose": "FQ",   "qty": 10, "priority": 10},
+    {"order_id": "O-Q2",  "purpose": "FQ2",  "qty": 10, "priority": 10},
+    {"order_id": "O-NE",  "purpose": "FNE",  "qty": 10, "priority": 10},
+    {"order_id": "O-EXP", "purpose": "FEXP", "qty": 10, "priority": 10}
+  ]
+}

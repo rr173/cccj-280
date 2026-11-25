@@ -1,0 +1,20 @@
+{
+  "name": "priority_tradeoff",
+  "batches": [
+    {"batch_id": "B-P", "production_date": "2026-01-01", "purposes": ["F"], "initial_status": "QUARANTINED"}
+  ],
+  "quantity_events": [
+    {"event_id": "EV-601", "batch_id": "B-P", "type": "RECEIPT", "qty": 100, "effective_at": "2026-01-03T08:00:00Z"}
+  ],
+  "status_events": [
+    {"event_id": "EV-S60", "batch_id": "B-P", "status": "RELEASED", "effective_at": "2026-01-04T00:00:00Z", "evidence_id": "EV-Q60"}
+  ],
+  "shelf_rules": [
+    {"rule_id": "R-GEN-V1", "purpose": null, "version": "v1", "effective_at": "2025-01-01T00:00:00Z", "shelf_life_days": 720, "timezone": "UTC"}
+  ],
+  "orders": [
+    {"order_id": "O-HI",  "purpose": "F", "qty": 100, "priority": 100},
+    {"order_id": "O-LO1", "purpose": "F", "qty": 60,  "priority": 1},
+    {"order_id": "O-LO2", "purpose": "F", "qty": 40,  "priority": 1}
+  ]
+}

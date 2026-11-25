@@ -1,0 +1,37 @@
+{
+  "allocations": [
+    {
+      "batch_id": "B-A",
+      "expiry": "2027-12-22T00:00:00+00:00",
+      "order_id": "O-A",
+      "qty": 100,
+      "rule_id": "R-GEN-V1"
+    },
+    {
+      "batch_id": "B-WIDE",
+      "expiry": "2027-12-22T00:00:00+00:00",
+      "order_id": "O-B",
+      "qty": 100,
+      "rule_id": "R-GEN-V1"
+    }
+  ],
+  "as_of": "2026-06-01T00:00:00+00:00",
+  "balances": {
+    "B-A": 100,
+    "B-WIDE": 100
+  },
+  "blocked": [],
+  "dataset_name": "wide_narrow",
+  "input_hash": "b06c0092e0d0b52c",
+  "objective": [
+    2,
+    200
+  ],
+  "plan_id": "WN-OPT",
+  "priority_levels": [
+    10
+  ],
+  "rejected_returns": [],
+  "rule_version": null,
+  "solver": "branch_and_bound"
+}
